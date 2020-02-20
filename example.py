@@ -24,17 +24,18 @@
 # SOFTWARE.
 
 import cv2
+import numpy as np
 from mtcnn import MTCNN
 
 detector = MTCNN()
-
-image = cv2.cvtColor(cv2.imread("ivan.jpg"), cv2.COLOR_BGR2RGB)
+image = cv2.cvtColor(cv2.imread("no-faces.jpg"), cv2.COLOR_BGR2RGB)
+#image = cv2.cvtColor(cv2.imread("ivan.jpg"), cv2.COLOR_BGR2RGB)
 result = detector.detect_faces(image)
 
 # Result is an array with all the bounding boxes detected. We know that for 'ivan.jpg' there is only one.
 bounding_box = result[0]['box']
 keypoints = result[0]['keypoints']
-
+"""
 cv2.rectangle(image,
               (bounding_box[0], bounding_box[1]),
               (bounding_box[0]+bounding_box[2], bounding_box[1] + bounding_box[3]),
@@ -48,5 +49,11 @@ cv2.circle(image,(keypoints['mouth_left']), 2, (0,155,255), 2)
 cv2.circle(image,(keypoints['mouth_right']), 2, (0,155,255), 2)
 
 cv2.imwrite("ivan_drawn.jpg", cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
-
+"""
 print(result)
+"""
+img_x = np.expand_dims(image, 0)
+img_y = np.transpose(img_x, (0, 3, 1, 2))
+detector.enable_tvm(img_y.shape, 'pnet')
+result = detector.detect_faces(image)
+"""
